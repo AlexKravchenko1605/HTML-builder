@@ -5,8 +5,7 @@ const finalyDirectory = path.join(__dirname, "project-dist");
 const finalyAssets = path.join(finalyDirectory, "assets");
 const componentsDirectory = path.join(__dirname, "components");
 const styleDirectory = path.join(__dirname, "styles");
-const finalyStyleCss = path.join(finalyDirectory, "style.css");
-const writeStream = fs.createWriteStream(finalyStyleCss);
+
 const templateHTML = path.join(__dirname, "template.html");
 const assetsDirectory = path.join(__dirname, "assets");
 
@@ -31,6 +30,14 @@ const readFolder = async (folder) => {
   return filesNames;
 };
 
+const deleteFolder = async (folder) => {
+  try {
+    await fs.promises.rm(folder, { recursive: true });
+  } catch (e) {
+    console.log("");
+  }
+};
+
 const copyFiles = async (fileNames, from, to) => {
   for (let file of fileNames) {
     const fromFile = path.join(from, file.name);
@@ -44,6 +51,8 @@ const copyFiles = async (fileNames, from, to) => {
 };
 
 const createCss = async () => {
+  const finalyStyleCss = path.join(finalyDirectory, "style.css");
+  const writeStream = fs.createWriteStream(finalyStyleCss);
   try {
     const files = await fs.promises.readdir(path.join(styleDirectory), {
       withFileTypes: true,
@@ -79,6 +88,7 @@ const buildHTMLFile = async (file, to) => {
 };
 
 const create = async () => {
+  await deleteFolder(finalyDirectory);
   await createFolder(finalyDirectory);
   await copyDir(assetsDirectory, finalyAssets);
   await createCss();
